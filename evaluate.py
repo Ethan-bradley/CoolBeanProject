@@ -10,15 +10,16 @@ def get_start_day(time, day):
 
 
 def evaluate(weeks, guessfunc, num_weeks):
-    hours = []
+    hours = {i: [0, 0] for i in range(7)}
     for week_index in range(len(weeks.weeks)):
         if week_index > num_weeks:
             for tweet_index in range(len(weeks.weeks[week_index].tweets)):
-                tweet = weeks.weeks[week_index].get_tweet(tweet_index)
+                tweet = weeks.get_week(week_index).get_tweet(tweet_index)
                 guess = guessfunc(weeks, tweet.time - get_start_day(tweet.time, 2), tweet_index, num_weeks, week_index)
-                correct = len(weeks.weeks[week_index].tweets)
+                correct = len(weeks.get_week(week_index).tweets)
                 error = abs(guess - correct)
-                print('-')
-                print(week_index)
-                print(guess, correct)
-                print(round(error, 4))
+                hours[(weeks.get_week(week_index).end - tweet.time).days][0] += error
+                hours[(weeks.get_week(week_index).end - tweet.time).days][1] += 1
+    for i in range(7):
+        hours[i][0] /= hours[i][1]
+    print(hours)

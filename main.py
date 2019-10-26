@@ -52,7 +52,7 @@ class Week:
             weeks=1), 'tweet must be within week'
         for tweet_index in range(len(self.tweets) - 1, -1, -1):
             if tweet.time > self.tweets[tweet_index].time:
-                self.tweets.insert(tweet_index, tweet)
+                self.tweets.insert(tweet_index+1, tweet)
                 return
         self.tweets.insert(0, tweet)
 
@@ -171,5 +171,5 @@ def csv_to_weeks(file, start):
     return new_weeks
 
 
-everything = csv_to_weeks('realDonaldTrump.csv', dt.datetime(2019, 1, 2, 12))
+everything = csv_to_weeks('realDonaldTrump.csv', dt.datetime(2018, 1, 3, 12))
 evaluate(everything, guess, 5)
