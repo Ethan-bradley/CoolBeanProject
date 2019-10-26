@@ -52,7 +52,7 @@ class Week:
             weeks=1), 'tweet must be within week'
         for tweet_index in range(len(self.tweets) - 1, -1, -1):
             if tweet.time > self.tweets[tweet_index].time:
-                self.tweets.insert(tweet_index+1, tweet)
+                self.tweets.insert(tweet_index + 1, tweet)
                 return
         self.tweets.insert(0, tweet)
 
@@ -139,6 +139,22 @@ class Weeks:
             n += self.weeks[week - i - 1].get_num_after(timedelta)
         return n / num_weeks
 
+    def get_av_len_matching(self, timedelta, tweets, bounds=5, num_weeks=-1, week=-1):
+        n = 0
+        count = 0
+        if week == -1:
+            week = len(self.weeks)
+        if num_weeks == -1:
+            num_weeks = len(self.weeks)
+        for i in range(num_weeks):
+            before = self.weeks[week - i - 1].get_num_before(timedelta)
+            error = tweets - before
+            if abs(error) <= bounds:
+                n, count = n + self.weeks[week - i - 1].get_num_tweets() + error, count + 1
+        if count == 0:
+            return tweets + self.get_av_num_after(timedelta, num_weeks, week)
+        return n / count
+
     def get_daily_avs(self, num_weeks=-1, week=-1):
         s = [0, 0, 0, 0, 0, 0, 0]
         if week == -1:
@@ -156,6 +172,20 @@ class Weeks:
     def get_week_of_tweet(self, tweet):
         return get_num_weeks_till(self.start, tweet.time)
 
+    def weeks_to_csv(self):
+        with open('data.csv', mode='w') as csv_file:
+            tweet_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            tweet_writer.writerow(['Days', 'Hours', 'Time', 'tweets', 'total'])
+
+            for week in self.weeks:
+                for tweet in week.tweets:
+                    days = (tweet.time - self.start).days
+                    hours = round((tweet.time - week.start).seconds/3600, 3)
+                    time = round((week.end - tweet.time).seconds/3600, 3)
+                    tweets = week.get_num_before(tweet.time - week.start)
+                    total = week.get_num_tweets()
+                    tweet_writer.writerow([days, hours, time, tweets, total])
+
 
 def csv_to_weeks(file, start):
     new_weeks = Weeks(start)
@@ -172,4 +202,4 @@ def csv_to_weeks(file, start):
 
 
 everything = csv_to_weeks('realDonaldTrump.csv', dt.datetime(2018, 1, 3, 12))
-evaluate(everything, guess, 5)
+everything.weeks_to_csv()
