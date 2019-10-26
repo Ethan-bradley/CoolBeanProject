@@ -1,6 +1,17 @@
 import datetime as dt
 import csv
 from guesser import *
+from evaluate import *
+
+
+def get_num_weeks_till(start, time):
+    assert start <= time, 'start must be before time'
+    count = 0
+    while True:
+        if time - start < dt.timedelta(weeks=1):
+            return count
+        start += dt.timedelta(weeks=1)
+        count += 1
 
 
 def get_next_week(start, time):
@@ -65,7 +76,7 @@ class Week:
             s[tweet.time.weekday()] += 1
         if percentage:
             for i in range(7):
-                s[i] = s[i]/len(self.tweets)
+                s[i] = s[i] / len(self.tweets)
         return s
 
 
@@ -139,13 +150,16 @@ class Weeks:
             for i in range(7):
                 s[i] += split[i]
         for i in range(7):
-            s[i] = s[i]/num_weeks
+            s[i] = s[i] / num_weeks
         return s
+
+    def get_week_of_tweet(self, tweet):
+        return get_num_weeks_till(self.start, tweet.time)
 
 
 def csv_to_weeks(file, start):
     new_weeks = Weeks(start)
-    with open(file) as csv_file:
+    with open(file, encoding='utf8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         lst = reversed(list(csv_reader))
         for row in lst:
@@ -158,7 +172,4 @@ def csv_to_weeks(file, start):
 
 
 everything = csv_to_weeks('realDonaldTrump.csv', dt.datetime(2019, 1, 2, 12))
-print('num before:', everything.get_av_num_before(dt.timedelta(days=3, hours=7)))
-print('num_after:', everything.get_av_num_after(dt.timedelta(days=3, hours=7)))
-print('guess:', guess(everything, dt.timedelta(days=3, hours=7), 100))
-print('daily:', everything.get_daily_avs())
+evaluate(everything, guess, 5)
