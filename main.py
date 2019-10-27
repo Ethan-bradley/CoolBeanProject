@@ -1,10 +1,6 @@
-# from guesser import *
-# from rip3000 import *
-# from evaluate import *
-#import sys
-#sys.path.append("/python-getting-started/Cool-Bean-Project/")
-from .guesser import *
-from .rip3000 import *
+from guesser import *
+from rip3000 import *
+from evaluate import *
 
 
 def get_num_weeks_till(start, time):
@@ -175,17 +171,40 @@ class Weeks:
     def get_week_of_tweet(self, tweet):
         return get_num_weeks_till(self.start, tweet.time)
 
+    def get_week_time(self, time, offset=0):
+        for week_i in range(len(self.weeks)):
+            if self.weeks[week_i].start <= time < self.weeks[week_i].end:
+                return self.weeks[week_i + offset]
+        assert True, 'week not found'
+
     def weeks_to_csv(self):
         with open('data.csv', mode='w') as csv_file:
             tweet_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
             for week in range(len(self.weeks)):
                 for tweet in self.weeks[week].tweets:
-                    days = week
-                    time = round((self.weeks[week].end - tweet.time).total_seconds()/86400, 3)
+                    if week < 5:
+                        break
+                    time = round((self.get_week(week).end - tweet.time).total_seconds()/86400, 3)
                     tweets = self.weeks[week].get_num_before(tweet.time - self.weeks[week].start) + 1
+                    last5 = sum([self.weeks[week-i].get_num_tweets() for i in range(1, 6)])/5//5*5
                     total = self.weeks[week].get_num_tweets()
-                    tweet_writer.writerow([days, time, tweets, total])
+                    tweet_writer.writerow([time, tweets, last5, total])
+
+    def weeks_to_time_csv(self):
+        with open('data.csv', mode='w') as csv_file:
+            tweet_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+            time = self.start
+            time += dt.timedelta(weeks=5)
+            while time <= self.get_week(-1).end:
+                week = self.get_week_time(time)
+                left = round((week.end - time).total_seconds() / 86400, 3)
+                tweets = week.get_num_before(time - week.start) + 1
+                last5 = sum([self.get_week_time(time, -i).get_num_tweets() for i in range(1, 6)]) / 5 // 5 * 5
+                total = week.get_num_tweets()
+                tweet_writer.writerow([left, tweets, last5, total])
+                time += dt.timedelta(minutes=30)
 
 
 def csv_to_weeks(file, start=dt.datetime(2017, 1, 4, 12), time_col=2):
@@ -231,8 +250,10 @@ def trumpGuess():
     now = dt.datetime.now()
     user = get_week_tweets("realDonaldTrump")
     everything = ripper_to_weeks(user + '.csv')
-    return guess((now - dt.datetime(2018, 1, 3, 12)).total_seconds()//604800, round((everything.get_week(-1).end - now).total_seconds()/86400, 3), everything.get_week(-1).get_num_tweets())
+    return guess((now - dt.datetime(2018, 1, 3, 12)).total_seconds() // 604800,
+                 round((everything.get_week(-1).end - now).total_seconds() / 86400, 3),
+                 everything.get_week(-1).get_num_tweets())
 
 
-# everything = csv_to_weeks('Trump.csv')
-# evaluate(everything, guess)
+everything = csv_to_weeks('Trump.csv')
+everything.weeks_to_csv()
