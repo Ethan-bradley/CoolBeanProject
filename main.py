@@ -1,7 +1,5 @@
-import datetime as dt
-import csv
 from guesser import *
-from evaluate import *
+from rip3000 import *
 
 
 def get_num_weeks_till(start, time):
@@ -185,15 +183,49 @@ class Weeks:
                     tweet_writer.writerow([days, time, tweets, total])
 
 
-def csv_to_weeks(file, start):
+def csv_to_weeks(file, start=dt.datetime(2017, 1, 4, 12), time_col=2):
     new_weeks = Weeks(start)
     with open(file, encoding='utf8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         lst = reversed(list(csv_reader))
         for row in lst:
-            if row[2] != 'created_at':
-                time = row[2]
+            if row[time_col] != 'created_at':
+                time = row[time_col]
                 time = dt.datetime.strptime(time, '%m-%d-%Y %H:%M:%S')
                 if time >= start:
                     new_weeks.add_tweet(Tweet(time))
+    new_weeks.start = new_weeks.get_week(0).start
     return new_weeks
+
+
+def ripper_to_weeks(file, start=dt.datetime(2017, 1, 4, 12), time_col=0):
+    new_weeks = Weeks(start)
+    with open(file, encoding='utf8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        lst = reversed(list(csv_reader))
+        for row in lst:
+            if row[time_col] != 'date':
+                time = row[time_col]
+                time = dt.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+                if time >= start:
+                    new_weeks.add_tweet(Tweet(time))
+    new_weeks.start = new_weeks.get_week(0).start
+    return new_weeks
+
+
+def guess2(user):
+    tweets = get_tweets(user)
+    dt2 = dt.datetime.now()
+    start = dt2 - dt.timedelta(days=dt2.weekday())
+    end = start + dt.timedelta(days=6)
+    numberInWeek = tweets
+
+
+def trumpGuess():
+    now = dt.datetime.now()
+    user = get_tweets("realDonaldTrump")
+    everything = ripper_to_weeks(user + '.csv')
+    return guess((now - dt.datetime(2018, 1, 3, 12)).total_seconds()//604800, round((everything.get_week(-1).end - now).total_seconds()/86400, 3), everything.get_week(-1).get_num_tweets())
+
+
+print(trumpGuess())
