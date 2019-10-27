@@ -1,5 +1,5 @@
 import tweepy
-import auths
+from . import auths
 import csv
 import datetime as dt
 
