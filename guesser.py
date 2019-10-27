@@ -9,5 +9,4 @@ def guess(days, time, tweets):
     time = (time - 3.531709) / 2.064484
     tweets = (tweets - 62.426499) / 51.817219
     df = pd.DataFrame.from_dict({'Days': [days], 'Time': [time], 'tweets': [tweets]})
-    print(model.predict(np.array(df)))
-    
+    return model.predict(np.array(df))[0][0]

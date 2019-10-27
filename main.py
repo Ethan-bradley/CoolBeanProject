@@ -197,7 +197,3 @@ def csv_to_weeks(file, start):
                 if time >= start:
                     new_weeks.add_tweet(Tweet(time))
     return new_weeks
-
-
-everything = csv_to_weeks('realDonaldTrump.csv', dt.datetime(2018, 1, 3, 12))
-everything.weeks_to_csv()
