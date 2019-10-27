@@ -36,7 +36,7 @@ def get_tweets(user):  # only gets 3000 tweets
     return user
 
 
-def get_300(user):
+def get_week_tweets(user):
     with open(user + '.csv', mode='w') as csv_file:
         tweet_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         tweet_writer.writerow(['date', 'id'])

@@ -214,17 +214,18 @@ def ripper_to_weeks(file, start=dt.datetime(2017, 1, 4, 12), time_col=0):
     return new_weeks
 
 
-def guess2(user):
-    tweets = get_tweets(user)
-    dt2 = dt.datetime.now()
-    start = dt2 - dt.timedelta(days=dt2.weekday())
-    end = start + dt.timedelta(days=6)
-    numberInWeek = tweets
+def guessUser(user):
+    now = dt.datetime.now()
+    user = get_week_tweets(user)
+    everything = ripper_to_weeks(user + '.csv')
+    return guess((now - dt.datetime(2018, 1, 3, 12)).total_seconds() // 604800,
+                 round((everything.get_week(-1).end - now).total_seconds() / 86400, 3),
+                 everything.get_week(-1).get_num_tweets())
 
 
 def trumpGuess():
     now = dt.datetime.now()
-    user = get_300("realDonaldTrump")
+    user = get_week_tweets("realDonaldTrump")
     everything = ripper_to_weeks(user + '.csv')
     return guess((now - dt.datetime(2018, 1, 3, 12)).total_seconds()//604800, round((everything.get_week(-1).end - now).total_seconds()/86400, 3), everything.get_week(-1).get_num_tweets())
 
