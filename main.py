@@ -1,5 +1,5 @@
-import sys
-sys.path.append("/python-getting-started/Cool-Bean-Project")
+#import sys
+#sys.path.append("/python-getting-started/Cool-Bean-Project/")
 from guesser import *
 from rip3000 import *
 
