@@ -2,7 +2,7 @@ import tensorflow as tf
 import pandas as pd
 import numpy as np
 
-model = tf.keras.models.load_model('./model3.h5')
+model = tf.keras.models.load_model('.model3.h5')
 
 
 # Weeks is week in dataset. Time is days until end of week, tweets is number of tweets in that week
