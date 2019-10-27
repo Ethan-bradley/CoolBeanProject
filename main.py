@@ -1,5 +1,6 @@
 from guesser import *
 from rip3000 import *
+from evaluate import *
 
 
 def get_num_weeks_till(start, time):
@@ -223,9 +224,10 @@ def guess2(user):
 
 def trumpGuess():
     now = dt.datetime.now()
-    user = get_tweets("realDonaldTrump")
+    user = get_300("realDonaldTrump")
     everything = ripper_to_weeks(user + '.csv')
     return guess((now - dt.datetime(2018, 1, 3, 12)).total_seconds()//604800, round((everything.get_week(-1).end - now).total_seconds()/86400, 3), everything.get_week(-1).get_num_tweets())
 
 
-print(trumpGuess())
+# everything = csv_to_weeks('Trump.csv')
+# evaluate(everything, guess)
