@@ -175,16 +175,14 @@ class Weeks:
     def weeks_to_csv(self):
         with open('data.csv', mode='w') as csv_file:
             tweet_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            tweet_writer.writerow(['Days', 'Hours', 'Time', 'tweets', 'total'])
 
-            for week in self.weeks:
-                for tweet in week.tweets:
-                    days = (tweet.time - self.start).days
-                    hours = round((tweet.time - week.start).seconds/3600, 3)
-                    time = round((week.end - tweet.time).seconds/3600, 3)
-                    tweets = week.get_num_before(tweet.time - week.start)
-                    total = week.get_num_tweets()
-                    tweet_writer.writerow([days, hours, time, tweets, total])
+            for week in range(len(self.weeks)):
+                for tweet in self.weeks[week].tweets:
+                    days = week
+                    time = round((self.weeks[week].end - tweet.time).total_seconds()/86400, 3)
+                    tweets = self.weeks[week].get_num_before(tweet.time - self.weeks[week].start) + 1
+                    total = self.weeks[week].get_num_tweets()
+                    tweet_writer.writerow([days, time, tweets, total])
 
 
 def csv_to_weeks(file, start):

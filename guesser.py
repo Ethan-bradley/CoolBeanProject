@@ -1,7 +1,13 @@
-def guess1(weeks, timedelta, tweets, num_weeks=-1, week=-1, bound=10):
-    return weeks.get_av_len_matching(timedelta, tweets, bound, num_weeks, week)
+import tensorflow as tf
+import pandas as pd
+import numpy as np
 
+model = tf.keras.models.load_model('model2.h5')
 
-def guess2(weeks, timedelta, tweets, num_weeks=-1, week=-1):
-    return tweets + weeks.get_av_num_after(timedelta, num_weeks, week)
-
+def guess(days, time, tweets):
+    days = (days - 407.633877) / 186.525372
+    time = (time - 3.531709) / 2.064484
+    tweets = (tweets - 62.426499) / 51.817219
+    df = pd.DataFrame.from_dict({'Days': [days], 'Time': [time], 'tweets': [tweets]})
+    print(model.predict(np.array(df)))
+    
