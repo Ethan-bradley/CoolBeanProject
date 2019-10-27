@@ -9,7 +9,7 @@ def get_start_day(time, day):
     return dt.datetime(time.year, time.month, time.day, 12)
 
 
-def evaluate(weeks, guessfunc, num_weeks):
+def evaluate(weeks, guessfunc, num_weeks=-1):
     hours = {i: [0, 0] for i in range(7)}
     for week_index in range(len(weeks.weeks)):
         if week_index > num_weeks:
