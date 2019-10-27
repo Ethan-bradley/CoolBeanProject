@@ -1,7 +1,7 @@
 #import sys
 #sys.path.append("/python-getting-started/Cool-Bean-Project/")
-from guesser import *
-from rip3000 import *
+from .guesser import *
+from .rip3000 import *
 
 
 def get_num_weeks_till(start, time):
