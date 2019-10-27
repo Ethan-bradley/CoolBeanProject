@@ -1,6 +1,5 @@
 import sys
-print(sys.path)
-sys.path.append("/Users/ethanbradley/Desktop/python-getting-started/Cool-Bean-Project")
+sys.path.append("/python-getting-started/Cool-Bean-Project")
 from guesser import *
 from rip3000 import *
 
