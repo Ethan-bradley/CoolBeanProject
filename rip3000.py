@@ -25,6 +25,4 @@ def get_tweets(user):  # only gets 3000 tweets
                                int(unconverted[2]),
                                int(hour[0]), int(hour[1]), int(hour[2]))
             tweet_writer.writerow([time, json['id']])
-
-
-    get_tweets('realDonaldTrump')
+    return user
